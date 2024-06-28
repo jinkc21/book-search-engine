@@ -1,0 +1,34 @@
+[
+    {
+       "authors": "J.K. Rowling",
+       "description": "The first book in the Harry Potter series makes the perfect introduction to the world of Hogwarts.",
+      "bookId": 3,
+        "image": "https://images-na.ssl-images-amazon.com/images/I/51UoqRAxwEL._SX331_BO1,204,203,200_.jpg",
+        "link": "https://www.amazon.com/Harry-Potter-Sorcerers-Stone-Rowling/dp/059035342X/ref=sr_1_1?dchild=1&keywords=harry+potter+and+the+sorcerer%27s+stone&qid=1615210007&sr=8-1",
+       "title": "Harry Potter and the Sorcerer's Stone"
+    },
+    {
+        "authors": "Stephen King",
+        "description": "The first book in the Dark Tower series introduces readers to Roland of Gilead and his quest to find the Dark Tower.",
+        "bookId": 4,
+        "image": "https://images-na.ssl-images-amazon.com/images/I/51QGJX9F5HL._SX331_BO1,204,203,200_.jpg",
+        "link": "https://www.amazon.com/Gunslinger-Dark-Tower-Stephen-King/dp/1501161806/ref=sr_1_1?dchild=1&keywords=the+gunslinger&qid=1615210043&sr=8-1",
+        "title": "The Gunslinger"
+    },
+    {
+        "authors": "J.R.R. Tolkien",
+        "description": "The first book in the Lord of the Rings series follows Frodo Baggins as he sets out on a quest to destroy the One Ring.",
+        "bookId": 5,
+        "image": "https://images-na.ssl-images-amazon.com/images/I/51ZJ2q4%2BZEL._SX331_BO1,204,203,200_.jpg",
+        "link": "https://www.amazon.com/Fellowship-Ring-Lord-Rings-Book/dp/0618640150/ref=sr_1_1?dchild=1&keywords=the+fellowship+of+the+ring&qid=1615210071&sr=8-1",
+        "title": "The Fellowship of the Ring"
+    },
+    {   
+        "authors": "George R.R. Martin",
+        "description": "The first book in the A Song of Ice and Fire series introduces readers to the world of Westeros and the power struggles between noble families.",
+        "bookId": 6,
+        "image": "https://images-na.ssl-images-amazon.com/images/I/51bKZ4AN2zL._SX331_BO1,204,203,200_.jpg",
+        "link": "https://www.amazon.com/Game-Thrones-Song-Fire-Book/dp/0553593714/ref=sr_1_1?dchild=1&keywords=a+game+of+thrones&qid=1615210091&sr=8-1",
+        "title": "A Game of Thrones"
+    }
+]
