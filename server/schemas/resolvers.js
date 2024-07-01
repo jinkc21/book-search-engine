@@ -1,36 +1,38 @@
-const { User, Book } = require('../models');
+const { User } = require('../models');
+const { signToken, AuthenticationError } = require('../utils/auth');
 
 const resolvers = {
   Query: {
-    users: async () => {
-      return User.find().populate('books');
-    },
-    user: async (parent, { username }) => {
-      return User.findOne({ username }).populate('books');
-    },
-    books: async (parent, { username }) => {
-      const params = username ? { username } : {};
-      return Book.find(params).sort({ createdAt: -1 });
-    },
-    book: async (parent, { bookId }) => {
-      return Book.findOne({ _id: bookId });
-    },
-    me: async (parent, args, context) => {
-      if (context.user) {
-        return User.findOne({ _id: context.user._id }).populate('books');
+    // Resolver for getting a single user by ID or username
+    getSingleUser: async (_, args, context) => {
+      // Assuming context provides user or params
+      const { user, params } = context;
+      const foundUser = await User.findOne({
+        $or: [{ _id: user ? user._id : params.id }, { username: params.username }],
+      });
+
+      if (!foundUser) {
+        throw AuthenticationError;
       }
-      throw AuthenticationError;
+
+      return foundUser;
     },
   },
-
   Mutation: {
-    addUser: async (parent, { username, email, password }) => {
+    // Resolver for creating a user
+    addUser: async (_, { username, email, password }) => {
       const user = await User.create({ username, email, password });
+
+      if (!user) {
+        throw AuthenticationError;
+      }
+
       const token = signToken(user);
       return { token, user };
     },
-    login: async (parent, { email, password }) => {
-      const user = await User.findOne({ email });
+    // Resolver for logging in a user
+    login: async (_, { username, email, password }) => {
+      const user = await User.findOne({ $or: [{ username }, { email }] });
 
       if (!user) {
         throw AuthenticationError;
@@ -43,24 +45,48 @@ const resolvers = {
       }
 
       const token = signToken(user);
-
       return { token, user };
     },
-    addBook: async (parent, { bookText }, context) => {
-      if (context.user) {
-        const book = await Book.create({
-          bookText,
-          bookAuthor: context.user.username,
-        });
+    saveBook: async (_, { bookDetails }, { user }) => {
+      if (!user) {
+        throw AuthenticationError;
+        ('You need to be logged in!');
+      }
 
-        await User.findOneAndUpdate(
-          { _id: context.user._id },
-          { $addToSet: { books: book._id } }
+      try {
+        const updatedUser = await User.findOneAndUpdate(
+          { _id: user._id },
+          { $addToSet: { savedBooks: bookDetails } },
+          { new: true, runValidators: true }
         );
+        return updatedUser;
+      } catch (err) {
+        console.error(err);
+        throw AuthenticationError;
+      }
+    },
+    // Resolver for removing a book from a user's savedBooks
+    removeBook: async (_, { bookId }, { user }) => {
+      if (!user) {
+        throw AuthenticationError;
+      }
+
+      try {
+        const updatedUser = await User.findOneAndUpdate(
+          { _id: user._id },
+          { $pull: { savedBooks: { bookId } } },
+          { new: true }
+        );
+        if (!updatedUser) {
+          throw AuthenticationError;
+        }
+        return updatedUser;
+      } catch (err) {
+        console.error(err);
+        throw AuthenticationError;
       }
     },
   },
 };
-
 
 module.exports = resolvers;
