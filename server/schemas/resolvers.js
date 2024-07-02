@@ -30,7 +30,7 @@ const resolvers = {
       return { token, user };
     },
     // Resolver for logging in a user
-    login: async (parent, { email, password }) => {
+    loginUser: async (parent, { email, password }) => {
       const user = await User.findOne({ email });
 
       if (!user) {
@@ -46,7 +46,7 @@ const resolvers = {
       const token = signToken(user);
       return { token, user };
     },
-    saveBook: async (parent, { bookDetails }, { user }) => {
+    saveBook: async (parent, { bookData }, { user }) => {
       if (!user) {
         throw AuthenticationError;
         ('You need to be logged in!');
@@ -55,7 +55,7 @@ const resolvers = {
       try {
         const updatedUser = await User.findOneAndUpdate(
           { _id: user._id },
-          { $addToSet: { savedBooks: bookDetails } },
+          { $addToSet: { savedBooks: bookData } },
           { new: true, runValidators: true }
         );
         return updatedUser;
