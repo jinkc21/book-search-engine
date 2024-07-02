@@ -4,19 +4,18 @@ const { signToken, AuthenticationError } = require('../utils/auth');
 const resolvers = {
   Query: {
     // Resolver for getting a single user by ID or username
-    getSingleUser: async (_, args, context) => {
-      // Assuming context provides user or params
-      const { user, params } = context;
-      const foundUser = await User.findOne({
-        $or: [{ _id: user ? user._id : params.id }, { username: params.username }],
-      });
+    me: async (_, __, { user }) => {
+      if (user) {
+        const userData
+        = await User.findOne({ _id: user._id })
+          .select('-__v -password')
+          .populate('savedBooks');
 
-      if (!foundUser) {
-        throw AuthenticationError;
+        return userData;
       }
-
-      return foundUser;
-    },
+      throw new AuthenticationError('Not logged in');
+    }
+    
   },
   Mutation: {
     // Resolver for creating a user
