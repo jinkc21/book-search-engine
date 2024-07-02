@@ -4,12 +4,12 @@ const { signToken, AuthenticationError } = require('../utils/auth');
 const resolvers = {
   Query: {
     // Resolver for getting a single user by ID or username
-    me: async (_, __, { user }) => {
+    me: async (parent, args, { user }) => {
       if (user) {
         const userData
         = await User.findOne({ _id: user._id })
           .select('-__v -password')
-          .populate('savedBooks');
+          .populate('books');
 
         return userData;
       }
@@ -19,8 +19,8 @@ const resolvers = {
   },
   Mutation: {
     // Resolver for creating a user
-    addUser: async (_, { username, email, password }) => {
-      const user = await User.create({ username, email, password });
+    addUser: async ( parent, args ) => {
+      const user = await User.create(args);
 
       if (!user) {
         throw AuthenticationError;
@@ -30,8 +30,8 @@ const resolvers = {
       return { token, user };
     },
     // Resolver for logging in a user
-    login: async (_, { username, email, password }) => {
-      const user = await User.findOne({ $or: [{ username }, { email }] });
+    login: async (parent, { email, password }) => {
+      const user = await User.findOne({ email });
 
       if (!user) {
         throw AuthenticationError;
@@ -46,7 +46,7 @@ const resolvers = {
       const token = signToken(user);
       return { token, user };
     },
-    saveBook: async (_, { bookDetails }, { user }) => {
+    saveBook: async (parent, { bookDetails }, { user }) => {
       if (!user) {
         throw AuthenticationError;
         ('You need to be logged in!');
@@ -65,7 +65,7 @@ const resolvers = {
       }
     },
     // Resolver for removing a book from a user's savedBooks
-    removeBook: async (_, { bookId }, { user }) => {
+    removeBook: async (parent, { bookId }, { user }) => {
       if (!user) {
         throw AuthenticationError;
       }
