@@ -9,8 +9,7 @@ const resolvers = {
         const userData
         = await User.findOne({ _id: user._id })
           .select('-__v -password')
-          .populate('books');
-
+        // console.log("user data", userData)
         return userData;
       }
       throw new AuthenticationError('Not logged in');
@@ -21,13 +20,14 @@ const resolvers = {
     // Resolver for creating a user
     addUser: async ( parent, args ) => {
       const user = await User.create(args);
-
+      // console.log("user", user)
       if (!user) {
         throw AuthenticationError;
       }
 
       const token = signToken(user);
       return { token, user };
+
     },
     // Resolver for logging in a user
     loginUser: async (parent, { email, password }) => {
